@@ -1,2 +1,1 @@
-# pen-testing
-Legacy Attack Detection with LimaCharlie
+# Legacy Attack Detection with LimaCharlie
