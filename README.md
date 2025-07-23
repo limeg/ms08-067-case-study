@@ -8,7 +8,7 @@ The exercise demonstrates:
 
     Exploitation using Metasploit
 
-    Post-exploitation actions (credential dumping, file exfiltration)
+    Post-exploitation actions (file exfiltration)
 
     Defensive shortcomings in legacy systems
 
@@ -90,32 +90,24 @@ exploit
 
 ![Metasploit exploit configuration](assets/kali-attack-set-up.png)
 
-
-### 3. Post-Exploitation
-- Manual Enumeration & Exfiltration
-- Credential Access
-
 **Meterpreter Session Opened**
 ![Meterpreter session opened](assets/kali-pen-test-successful.png)
 
-**System Info**
+### 3. Post-Exploitation
+- Manual Enumeration
+
 ![System info of exploited Windows XP](assets/win-info.png)
 
----
+![Navigating directories in Windows XP](assets/navigating-dir.png)
 
-## 🗂️ 
-
-### 6. Navigate File System
-
+- Credential Access
 ```bash
 cd C:\Documents and Settings\John\My Documents
 dir
 ```
-![Navigating directories in Windows XP](assets/navigating-dir.png)
 ![Browsing to password file on target](assets/data-target.png)
 
-### 7. View and Exfiltrate Password
-
+- File Viewing & Exfiltration
 ```bash
 type "Passwords.txt"
 ```
@@ -127,59 +119,76 @@ download "C:\Documents and Settings\John\My Documents\Passwords.txt"
 ![Downloading password file via Meterpreter](assets/data-exfiltrated.png)
 
 **Password file on Kali**
-![Password file on Kali system](assets/kali-file-extracted.png)
 
+![Password file on Kali system](assets/kali-file-extracted.png)
 ---
 
-## 📉 Detection Findings
+# 📉 Defensive Analysis
 
-**Security Logs: Empty**
+Windows XP Event Log Review
+``` bash
+eventvwr.msc
+```
+
 ![Windows XP Event Viewer - No logs](assets/win-no-logs.png)
 
-> The target system had no firewall, antivirus, or audit policy enabled. No security events were logged.
+*Zero events for: exploit execution, reverse shell, or file access*
 
+# What *Should* Have Been Logged
+
+| Action                    | Expected Log/Event (Sysmon)                |
+|--------------------------|---------------------------------------------|
+| Exploit Execution        | Exploit payload, Event ID 1                             |
+| Reverse shell            | New process creation, outbound TCP, Event ID 3|
+| File access/exfil        | Object access, shell interaction, Event ID 11|
 ---
 
-## 🧠 SOC Analyst Perspective
+## 🧩 MITRE ATT&CK Mapping
 
-### 🔍 What should’ve been logged?
-| Action                    | Expected Log/Event                         |
-|--------------------------|---------------------------------------------|
-| Reverse shell            | New process creation, outbound TCP          |
-| Lateral movement (SMB)   | Network connection, service creation        |
-| File access/exfil        | Object access, shell interaction            |
+| Tactic             | Technique ID                           |  Technique Name                        | Observed Activity            |
+|--------------------|----------------------------------------|----------------------------------------|------------------------------|
+| Reconnaissance     | T1595.002                              | Scanning: Vulnerability Scanning       | Nmap smb-vuln-ms08-067 script|
+| Initial Access     | T1190                                  | Exploit Public-Facing Application      | MS08-067 via SMB port 445    |
+| Execution          | T1059.003                              | Windows Command Shell                  | cmd.exe via meterpreter      |
+| Priv Escalation    | T1068                                  | Exploitation for Privilege Escalation  | ms08_067_netapi grants SYSTEM|
+| Discovery          | T1083                                  | File & Directory Discovery)            | dir C:\Documents and Settings|
+| Collection         | T1005                                  |	Data from Local System                 | Accessing Passwords.txt      |
+| Exfiltration       | T1041                                  |Exfiltration Over C2 Channel            | File download via meterpreter|
 
 ---
 
 ## 🔒 Mitigations & Recommendations
 
-- Patch MS08-067 (CVE-2008-4250)
-- Remove/segregate legacy systems from the network
-- Enable Windows auditing policies
-- Use modern EDR (e.g., Sysmon)
-- Block SMBv1 and restrict SMB traffic
+Patch Management
 
+    Apply MS08-067 patch (KB958644) immediately
+    Implement monthly patch cycles
+
+Network Controls
+
+    Block SMBv1 at network perimeter
+    Segment legacy systems into isolated VLANs
+    
+Logging & Monitoring
+
+    Enable basic auditing on legacy systems:
+    Deploy network IDS with rules for SMB exploits:
+
+Endpoint Hardening
+
+    Disable SMBv1 via registry:
+    Apply least-privilege principles to user accounts
 ---
 
-## 🧩 MITRE ATT&CK Mapping
+# Lessons Learned
 
-| Tactic             | Technique                             |
-|--------------------|----------------------------------------|
-| Initial Access     | Exploit Public-Facing App (T1190)      |
-| Execution          | Command and Scripting Interpreter (T1059) |
-| Credential Access  | OS Credential Dumping (T1003)          |
-| Collection         | Data from Local System (T1005)         |
-| Exfiltration       | Exfiltration Over C2 Channel (T1041)   |
+    Legacy systems are pivot points - Unpatched XP allowed full network compromise
 
+    Visibility gaps provide an entry point - Zero logs = zero detection windows
+
+    Compensating controls must be used - Network segmentation limits blast radius
+
+    Modern EDR can't protect unsupported OSes - Active asset management is non-negotiable
+
+    "This lab demonstrates that vulnerabilities discovered 15+ years ago remain catastrophically dangerous when core security hygiene is bypassed."
 ---
-
-## 🧾 Conclusion
-
-This lab demonstrates the ease of exploiting unpatched legacy systems and highlights the complete lack of detection due to missing logging. It reinforces the importance of strong visibility, patch management, and endpoint protection for defenders.
-
----
-
-## 📎 Appendix
-
-
-
