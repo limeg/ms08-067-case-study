@@ -42,8 +42,10 @@ Isolated host-only network with static IPs (DHCP disabled to prevent IP conflict
 ![Windows XP IPConfig output](assets/windows-ipconfig.png)
 
 ## Critical Step
-Disabled Windows Firewall
-<!-- XP firewall disabled -->
+Disable Windows Firewall
+
+![Windows firewall disabled](assets/win-firewall-off.png)
+
 ## Attack Workflow
 
 ### 1. 🔍 Reconnaissance
