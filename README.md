@@ -138,9 +138,9 @@ eventvwr.msc
 
 | Action                    | Expected Log/Event (Sysmon)                |
 |--------------------------|---------------------------------------------|
-| Exploit Execution        | Exploit payload, Event ID 1                             |
+| Exploit Execution        | Exploit payload, Event ID 1                 |
 | Reverse shell            | New process creation, outbound TCP, Event ID 3|
-| File access/exfil        | Object access, shell interaction, Event ID 11|
+| File access              | Security Log: Event ID 4663 (File Read)     |
 ---
 
 ## 🧩 MITRE ATT&CK Mapping
@@ -151,9 +151,9 @@ eventvwr.msc
 | Initial Access     | T1190                                  | Exploit Public-Facing Application      | MS08-067 via SMB port 445    |
 | Execution          | T1059.003                              | Windows Command Shell                  | cmd.exe via meterpreter      |
 | Priv Escalation    | T1068                                  | Exploitation for Privilege Escalation  | ms08_067_netapi grants SYSTEM|
-| Discovery          | T1083                                  | File & Directory Discovery)            | dir C:\Documents and Settings|
+| Discovery          | T1083                                  | File & Directory Discovery             | dir C:\Documents and Settings|
 | Collection         | T1005                                  |	Data from Local System                 | Accessing Passwords.txt      |
-| Exfiltration       | T1041                                  |Exfiltration Over C2 Channel            | File download via meterpreter|
+| Exfiltration       | T1041                                  | Exfiltration Over C2 Channel           | File download via meterpreter|
 
 ---
 
