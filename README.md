@@ -1,6 +1,9 @@
 # MS08-067 Legacy Exploitation Case Study
 
 ## Lab Overview
+
+![Simple diagram](assets/case-study-diagram.png)
+
 The exploit simulates a real-world exploitation scenario in a legacy Windows XP environment that was vulnerable to MS08-067 (CVE-2008-4250). The intent was to demonstrate the risk of outdated systems and ascertain detection visibility from the SOC analyst's perspective.
 The exercise demonstrates:
 
@@ -192,5 +195,10 @@ Endpoint Hardening
 
     Modern EDR can't protect unsupported OSes - Active asset management is non-negotiable
 
-    "This lab demonstrates that vulnerabilities discovered 15+ years ago remain catastrophically dangerous when core security hygiene is bypassed."
+ >  This lab demonstrates that vulnerabilities discovered 15+ years ago remain catastrophically dangerous when core security hygiene is bypassed.
 ---
+
+*References*
+- [MS08-067 Technical Advisory (CVE-2008-4250)](https://nvd.nist.gov/vuln/detail/CVE-2008-4250)
+- [MITRE ATT&CK Enterprise Tactics](https://attack.mitre.org/tactics/enterprise/)
+- [Sysmon for Advanced Windows Logging](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
